@@ -1,0 +1,4 @@
+libcusolver.so.11 {
+ global:
+*;
+};

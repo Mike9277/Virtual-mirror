@@ -1,0 +1,1 @@
+  -L/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/lib  -L"/usr/local/cuda-12.6/targets/x86_64-linux/lib/stubs"  -L"/usr/local/cuda-12.6/targets/x86_64-linux/lib"  "/usr/lib/x86_64-linux-gnu/libgtest_main.a" "/usr/lib/x86_64-linux-gnu/libgtest.a" -lstdc++fs -ldl  -lrdmacm -libverbs -llz4 -lcudadevrt -lcudart_static -lrt -lpthread 

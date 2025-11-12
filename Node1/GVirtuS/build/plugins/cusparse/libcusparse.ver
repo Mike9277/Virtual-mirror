@@ -1,0 +1,4 @@
+libcusparse.so.12 {
+ global:
+*;
+};

@@ -1,0 +1,1 @@
+cmd='./configure;--prefix=/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/external;CFLAGS=-fPIC;CPPFLAGS=-I/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/external/include;LDFLAGS=-L/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/external/lib'

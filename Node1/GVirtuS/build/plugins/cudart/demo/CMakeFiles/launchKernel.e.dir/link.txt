@@ -1,0 +1,1 @@
+/usr/bin/c++  -DGVIRTUS_HOME=\"/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS\" CMakeFiles/launchKernel.e.dir/launchKernel.e_generated_launchKernel.cu.o -o launchKernel.e   -L/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/lib  /usr/local/cuda-12.6/lib64/libcudart_static.a -ldl /usr/lib/x86_64-linux-gnu/librt.a 

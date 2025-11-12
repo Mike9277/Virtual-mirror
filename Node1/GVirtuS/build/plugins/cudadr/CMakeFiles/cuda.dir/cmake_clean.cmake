@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  ".1"
+  "CMakeFiles/cuda.dir/frontend/CudaDr.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDrFrontend.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDrFrontend.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_context.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_context.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_device.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_device.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_error.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_error.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_event.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_event.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_execution.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_execution.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_initialization.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_initialization.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_memory.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_memory.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_module.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_module.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_occupancy.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_occupancy.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_stream.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_stream.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_texture.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_texture.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_version.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_version.cpp.o.d"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_virtmemory.cpp.o"
+  "CMakeFiles/cuda.dir/frontend/CudaDr_virtmemory.cpp.o.d"
+  "libcuda.pdb"
+  "libcuda.so"
+  "libcuda.so.1"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/cuda.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

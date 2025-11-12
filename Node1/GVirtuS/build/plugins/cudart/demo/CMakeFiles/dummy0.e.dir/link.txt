@@ -1,0 +1,1 @@
+/usr/bin/c++  -DGVIRTUS_HOME=\"/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS\" CMakeFiles/dummy0.e.dir/dummy0.e_generated_dummy0.cu.o -o dummy0.e   -L/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/lib  /usr/local/cuda-12.6/lib64/libcudart_static.a -ldl /usr/lib/x86_64-linux-gnu/librt.a 

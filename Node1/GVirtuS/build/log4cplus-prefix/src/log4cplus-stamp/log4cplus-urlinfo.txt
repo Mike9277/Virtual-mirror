@@ -1,0 +1,12 @@
+# This is a generated file and its contents are an internal implementation detail.
+# The download step will be re-executed if anything in this file changes.
+# No other meaning or use of this file is supported.
+
+method=url
+command=/usr/bin/cmake;-P;/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/log4cplus-prefix/src/log4cplus-stamp/download-log4cplus.cmake;COMMAND;/usr/bin/cmake;-P;/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/log4cplus-prefix/src/log4cplus-stamp/verify-log4cplus.cmake;COMMAND;/usr/bin/cmake;-P;/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/log4cplus-prefix/src/log4cplus-stamp/extract-log4cplus.cmake
+source_dir=/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/log4cplus-prefix/src/log4cplus
+work_dir=/home/cldemo/guaitolini/virtual_mirror_GVirtus/GVirtuS/build/log4cplus-prefix/src
+url(s)=https://downloads.sourceforge.net/log4cplus/log4cplus-stable/2.1.2/log4cplus-2.1.2.tar.gz
+hash=
+no_extract=
+
