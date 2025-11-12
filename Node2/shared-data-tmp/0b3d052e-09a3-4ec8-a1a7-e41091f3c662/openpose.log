@@ -1,0 +1,121 @@
+docker run --rm \
+	--name openpose_test_container \
+	--network host \
+	-v ./examples/openpose/media:/opt/openpose/examples/media \
+	-v ./examples/openpose:/opt/openpose/examples/gvirtus \
+	-v ./examples/openpose/properties.json:/opt/GVirtuS/etc/properties.json \
+	-v ./examples/openpose/entrypoint.sh:/entrypoint.sh \
+	darsh916/openpose_gvirtus:cuda12.6 \
+	bash /entrypoint.sh --image_path=/opt/openpose/examples/media/sample1.jpg
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.6.3
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+WARNING: The NVIDIA Driver was not detected.  GPU functionality will not be available.
+   Use the NVIDIA Container Toolkit to start this container with GPU support; see
+   https://docs.nvidia.com/datacenter/cloud-native/ .
+
+🛠️ Compiling OpenPose test...
+🚀 Running OpenPose test...
+INFO - GVirtuS frontend version /opt/GVirtuS/etc/properties.json
+INFO - Parsing endpoint config from: /opt/GVirtuS/etc/properties.json
+DEBUG - Full JSON dump:
+{
+    "communicator": [
+        {
+            "endpoint": {
+                "port": "8888",
+                "protocol": "tcp",
+                "server_address": "10.30.7.117",
+                "suite": "tcp/ip"
+            },
+            "plugins": [
+                "cuda",
+                "cudart",
+                "cublas",
+                "curand",
+                "cudnn",
+                "cufft",
+                "cusolver",
+                "cusparse",
+                "nvrtc"
+            ]
+        }
+    ],
+    "secure_application": false
+}
+INFO - Parsed endpoint suite: tcp/ip
+INFO - Initializing TCP/IP Endpoint
+Starting OpenPose demo...
+Auto-detecting all available GPUs... Detected 1 GPU(s), using 1 of them starting at GPU 0.
+INFO - GVirtuS frontend version /opt/GVirtuS/etc/properties.json
+INFO - Parsing endpoint config from: /opt/GVirtuS/etc/properties.json
+DEBUG - Full JSON dump:
+{
+    "communicator": [
+        {
+            "endpoint": {
+                "port": "8888",
+                "protocol": "tcp",
+                "server_address": "10.30.7.117",
+                "suite": "tcp/ip"
+            },
+            "plugins": [
+                "cuda",
+                "cudart",
+                "cublas",
+                "curand",
+                "cudnn",
+                "cufft",
+                "cusolver",
+                "cusparse",
+                "nvrtc"
+            ]
+        }
+    ],
+    "secure_application": false
+}
+INFO - Parsed endpoint suite: tcp/ip
+INFO - Initializing TCP/IP Endpoint
+Body keypoints: Array<T>::toString():
+402.880951 190.467133 0.887000 
+397.288452 349.037445 0.841299 
+261.148865 351.998596 0.705430 
+235.660934 649.423340 0.735728 
+218.747498 884.665649 0.750324 
+530.513123 337.734222 0.724920 
+609.723633 513.404602 0.691728 
+623.880920 649.479614 0.833141 
+451.056641 737.308472 0.469790 
+368.934174 754.306580 0.439330 
+0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 
+533.308167 725.955811 0.439852 
+584.242798 1003.603027 0.114835 
+0.000000 0.000000 0.000000 
+371.763367 156.340729 0.864190 
+439.581512 153.554733 0.869610 
+329.279938 167.732117 0.870598 
+473.754059 167.655121 0.776856 
+0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 
+0.000000 0.000000 0.000000 
+
+
+Saved rendered pose image to: /opt/openpose/examples/media/sample1_pose.png
+Saved keypoints JSON to: /opt/openpose/examples/media/sample1_keypoints.json
+OpenPose demo successfully finished. Total time: 16.516277 seconds.
