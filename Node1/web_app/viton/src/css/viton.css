@@ -1,0 +1,362 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --white: #ffffff;
+    --error: #ff0077;
+    --color_r: 72;
+    --color_g: 188;
+    --color_b: 162;
+    --solid_color: rgb(var(--color_r), var(--color_g), var(--color_b));
+    --dark_color: rgb(calc(var(--color_r)*0.5), calc(var(--color_g) * 0.5), calc(var(--color_b) * 0.5));
+    --light_color: rgba(var(--color_r), var(--color_g), var(--color_b), 0.7);
+    --header_footer: var(--solid_color);
+    --button: var(--solid_color);
+    --button_hover: var(--dark_color);
+    --buton_inactive: var(--light_color);
+    --progress_bar: var(--solid_color);
+    --progress_bar_border: var(--light_color);
+    --progress_bar_bg: #f3f3f3;
+    --border_color: var(--light_color);
+}
+
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav {
+    display: flex;
+    height: 50px;
+    align-items: center;
+    background: var(--header_footer);
+}
+
+.nav li {
+    list-style: none;
+    margin-left: 2rem;
+}
+
+.nav a:hover {
+    color: rgb(0, 0, 0);
+    transition: ease-in 0.5s;
+}
+
+.nav a {
+    text-decoration: none;
+    color: var(--white);
+    justify-content: center;
+}
+
+.footer {
+    background: var(--header_footer);
+    height: 50px;
+    margin-top: auto;
+    display: flex;
+    color: white;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.footer p:nth-child(1) {
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer span {
+    margin: 0 1rem;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.content h1 {
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.content h3 {
+    font-style: italic;
+}
+
+.choose label img {
+    max-width: 80px;
+}
+
+.choose {
+    display: flex;
+    width: 80%;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 2rem 0;
+}
+
+.image-container {
+    width: 400px;
+    border: solid 3px var(--border_color);
+    height: 535px;
+    border-radius: 20px;
+    margin-left: 5rem;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 400px;
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+}
+
+
+.choose_result {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.res {
+    position: sticky;
+    max-width: 350px;
+    left: 3rem;
+    top: 0.5rem;
+}
+
+.res img {
+    width: 100%;
+}
+
+.choose form button {
+    background: var(--button);
+    color: var(--white);
+    border-radius: 58px;
+    font-weight: 100;
+    transition: ease-in-out 0.2s;
+    border: none;
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 1rem;
+}
+
+.button_preprocess {
+    background: var(--button);
+    margin: 1rem 0;
+    color: var(--white);
+    border-radius: 58px;
+    font-weight: 100;
+    transition: ease-in-out 0.2s;
+    border: none;
+    height: 50px;
+    width: 50%;
+    font-size: 2rem;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        /* Taille normale */
+    }
+
+    100% {
+        transform: scale(1.1);
+        /* Taille agrandie */
+    }
+}
+
+.button_preprocess_inactive {
+    margin: 1rem 0;
+    background: var(--buton_inactive);
+    color: var(--white);
+    border-radius: 58px;
+    font-weight: 100;
+    transition: ease-in-out 0.2s;
+    border: none;
+    height: 50px;
+    width: 50%;
+    font-size: 2rem;
+    pointer-events: none;
+}
+
+.choose form button:hover,
+.button_preprocess:hover,
+.bouton_test_viton:hover,
+.formvitontest button:hover,
+.bouton_capture:hover {
+    pointer-events: visible;
+    background: var(--button_hover);
+    font-weight: bold;
+}
+
+.preprocess {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.img_from_pre {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.img_from_pre img {
+    width: 350px;
+}
+
+.images_result {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 2rem;
+}
+
+.personradio {
+    display: flex;
+}
+
+.vitontest {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+.vitontest img {
+    width: 100%;
+}
+
+.formvitontest {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    margin: auto;
+}
+
+.formvitontest p {
+    align-self: flex-start;
+}
+
+.formvitontest button {
+    background: var(--button);
+    margin-top: 20px;
+    width: 50%;
+    border-radius: 15px;
+    border: none;
+    padding: 0.5rem;
+    color: var(--white);
+    font-size: 20px;
+}
+
+.centre {
+    margin: 1rem auto;
+}
+
+.bouton_test_viton {
+    background: var(--button);
+    border: none;
+    padding: 1rem;
+    border-radius: 20px;
+    color: var(--white);
+    display: flex;
+    margin: 1rem auto;
+    transition: ease-in-out 0.2s;
+}
+
+.progress-bar-container {
+    width: 80%;
+    background-color: var(--progress_bar_bg);
+    border: 1px solid var(--progress_bar_border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress-bar {
+    height: 20px;
+    width: 0;
+    background-color: var(--progress_bar);
+    transition: width 0.5s;
+}
+
+.formCapture {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bouton_capture {
+    background: var(--button);
+    border: none;
+    padding: 1rem;
+    border-radius: 20px;
+    color: var(--white);
+    margin: 1rem auto;
+}
+
+.camera {
+    display: flex;
+    flex-direction: column;
+}
+
+.margin0 {
+    margin-left: 0px;
+}
+
+.margin2 {
+    margin-left: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera_picture {
+    display: flex;
+}
+
+.error {
+    margin: auto;
+    background: var(--error);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: 2rem;
+    font-size: 30px;
+    text-align: center;
+}
+
+/* Style pour cacher les boutons radio */
+input[type="radio"] {
+    display: none;
+}
+
+/* Style pour le label entourant l'image */
+label {
+    cursor: pointer;
+    margin: 0;
+    padding: 10px;
+    display: inline-block;
+    box-sizing: border-box; /* Inclure la bordure dans les dimensions de l'élément */
+}
+
+/* Style pour mettre en surbrillance l'image sélectionnée */
+input[type="radio"]:checked + label {
+    box-shadow: 0px 0px 0px 4px #7d63e2 inset;
+    border-radius: 10%;
+}

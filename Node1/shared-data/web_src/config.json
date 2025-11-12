@@ -1,0 +1,5 @@
+{
+  "webPort": "3000",
+  "apiPort": "5000",
+  "cameraPort": "4000"
+}
