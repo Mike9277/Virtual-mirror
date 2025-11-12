@@ -1,1 +1,2 @@
 Node1/2D-Human-Parsing/pretrained/deeplabv3plus-xception-vocNov14_20-51-38_epoch-89.pth filter=lfs diff=lfs merge=lfs -text
+Node1/GVirtuS/examples/2d-human-parsing/deeplabv3plus-xception-vocNov14_20-51-38_epoch-89.pth filter=lfs diff=lfs merge=lfs -text
