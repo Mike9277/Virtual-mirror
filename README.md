@@ -51,8 +51,9 @@ This service is what merges images and garments and is deployed as an isolated c
 ## Set GPU Virtualization
 The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. The original repository, available at [Link text](https://github.com/ecn-aau/GVirtuS/tree/dev) has been modified to integrate it with the rest of the application. To properly setup GVirtus service, execute the following steps:
 
-1. Adjust addresses
-   Modify the ip addresses at .../GVirtuS/examples/openpose/properties.json, where "server_address" must be changed to your Node 2 ip address.
+1. **Adjust server address **
+   
+   On Node 1, modify the ip address at .../GVirtuS/examples/openpose/properties.json, where "server_address" must be changed to your Node 2 ip address.
    ```bash
    {
      "communicator": [
@@ -79,7 +80,28 @@ The application leverages on GPU virtualization service provided by GVirtus. GVi
      "secure_application": false
    }
    ```
-3. 
+2. **Adjust Frontend (Node 1) Docker components**
+   
+   GVirtuS operates in a client-server model, where the fronted functions as the client and the backend serves as the GPU execution engine. It relies on docker components that need to be set before executing the service. On Node 1, execute the following steps:
+
+   ```bash
+   docker pull darsh916/gvirtus
+   ```
+   ```bash
+   docker run --network host --privileged --name gvirtus_frontend -t gvirtus-env bash
+   ```
+3. **Adjust Backend (Node 2) Docker components**
+
+   As said, Node 2 should be a GPU-enabled device. Before proceeding, ensure the following requirements are met: Nvidia drivers should be installed and nvidia-container-toolkti must be configured. Then, you need to execute the following steps:
+
+   ```bash
+   docker pull darsh916/gvirtus
+   ```
+   ```bash
+   docker run --network host --privileged --name gvirtus_backend --gpus all -t gvirtus-env bash
+   ```
+
+Now that GVirtuS has been configured, you don't need to worry about anything else: it will be initialized and run at startup when the rest of the application is started.
 
 ## Run the application 
 You may run the application on Node 1, with the following command:
