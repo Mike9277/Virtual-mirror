@@ -8,10 +8,13 @@ Is dedicated to interacting with the user, collecting images and pre-processing 
 3. **rdma** provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service.
 
 ## Node 2
-Is where backend services are activated, both for rdma and gpu virtualization.
+Is where backend services are activated, both for rdma and gpu virtualization. These services are necessary to create communication channels between Node 1 and Node 2, are activated at startup and allow low-latency communication and hardware resources exploitation by the service deployed at Node 1.
 
 ## VITON
 This service is what merges images and garments and is deployed as an isolated container. In standard configuration is deployed on Node 2, but it may be deployed on Node 1 if local deployment is necessary.
+
+## Environment Setting
+
 
 **Bold Text**
 *Italic Text*
