@@ -128,7 +128,7 @@ export default function Add() {
         setLoading(true);
         setResultImageUrl(null);
         try {
-            const response = await fetch(`${config.apiUrl}/run-script_upl`, {
+            const response = await fetch(`${config.apiUrl}/run-script-upl`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

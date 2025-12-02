@@ -1,59 +1,81 @@
-FROM node:20-bullseye
+FROM nvcr.io/nvidia/doca/doca:3.1.0-devel-host
 
-WORKDIR /app
-
-# ========================
-# Copy components
-# ========================
-COPY web_app/ ./web_app/
-COPY env_config.json ./env_config.json
-COPY shared-data/ ./shared-data/
-COPY run_web_app_build.sh ./run_web_app_build.sh
-
-COPY parallel_process.sh ./parallel_process.sh
-COPY shared-data-tmp ./shared-data-tmp/
-COPY GVirtuS ./GVirtuS/
-COPY opencv ./opencv/
-COPY openpose ./openpose/
-COPY 2D-Human-Parsing ./2D-Human-Parsing/
-
-# RDMA Functions
-COPY rdma_service.sh ./rdma_service.sh
-COPY RDMA_functions/ ./RDMA_functions/
+ENV TZ=US \
+    DEBIAN_FRONTEND=noninteractive
 
 # ========================
-# Node.js dependencies
-# ========================
-WORKDIR /app/web_app/viton
-RUN npm install
-
-# ========================
-# Install dependencies + Docker CLI
+# Install system deps + Node.js + Python
 # ========================
 RUN apt-get update && apt-get install -y \
-    python3 python3-pip \
-    ffmpeg \
-    ssh \
-    sshpass \
-    openssh-client \
-    jq \
-    libgl1 \
-    libglib2.0-0 \
-    bc \
-    cmake build-essential git libopencv-dev \
+    curl wget gnupg2 \
+    python3 python3-dev python3-pip python3-numpy \
+    ninja-build build-essential cmake git \
+    ffmpeg ssh sshpass openssh-client jq \
+    libgl1 libglib2.0-0 \
+    bc libopencv-dev \
     libgflags-dev libgoogle-glog-dev libprotobuf-dev protobuf-compiler \
     libboost-all-dev libhdf5-serial-dev \
     libatlas-base-dev \
-    docker.io \
-    && python3 -m pip install --upgrade pip setuptools wheel \
+    apt-transport-https ca-certificates \
+    lsb-release gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# -------------------------
+# Install Node.js 20
+# -------------------------
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# -------------------------
+# Install Docker CLI only (for Docker-out-of-Docker)
+# -------------------------
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+       | tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && apt-get update && apt-get install -y docker-ce-cli
+
+# -------------------------
+# Python pip deps
+# -------------------------
+RUN python3 -m pip install --upgrade pip setuptools wheel \
     && python3 -m pip install --no-cache-dir \
         flask requests flask-cors pillow opencv-python \
         numpy scipy matplotlib scikit-image \
     && python3 -m pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
 # ========================
-# SSH Key for remote servers
+# CREATE WORKDIR
 # ========================
+WORKDIR /app
+
+# ========================
+# Copy all project files
+# ========================
+COPY . .
+COPY rdma-container/ /app/rdma-container/
+
+# ==============================================
+# Build Meson C++ application (from container 1)
+# ========================
+WORKDIR /app/rdma-container
+RUN apt-get remove -y meson || true \
+    && python3 -m pip install meson pybind11 \
+    && meson setup builddir-release -Dbuildtype=release \
+    && meson compile -C builddir-release
+
+ENV PYTHONPATH=/app/rdma-container/builddir-release
+
+# ========================
+# Node.js dependencies for web app
+# ========================
+WORKDIR /app/web_app/viton
+RUN npm install
+
+# ========================
+# SSH KEY + remote access (from container 2)
+# ========================
+WORKDIR /app
 RUN ssh-keygen -t ed25519 -f /root/.ssh/id_ed25519 -N "" -q
 
 ARG SERVER_USER
@@ -65,21 +87,10 @@ RUN sshpass -p "$PASSWORD" ssh-copy-id -o StrictHostKeyChecking=no $SERVER_USER@
 RUN sshpass -p "$PASSWORD" ssh-copy-id -o StrictHostKeyChecking=no $SERVER_USER@$SERVER2_IP || true
 
 # ========================
-# Enable scripts
+# Update env_config.json for Docker path
 # ========================
-WORKDIR /app
-RUN chmod +x run_web_app_build.sh
-RUN chmod +x parallel_process.sh
-
-# ========================
-# Update env_config.json for Docker environment
-# ========================
-RUN jq '.MAIN_DIR="/app"' env_config.json > env_config_tmp.json && mv env_config_tmp.json env_config.json
-
-# ========================
-# Ensure public exists
-# ========================
-RUN mkdir -p /app/web_app/viton/public
+RUN jq '.MAIN_DIR="/app"' env_config.json > env_config_tmp.json \
+    && mv env_config_tmp.json env_config.json
 
 # ========================
 # Build OpenPose CPU-only
@@ -87,12 +98,8 @@ RUN mkdir -p /app/web_app/viton/public
 WORKDIR /app/openpose
 RUN rm -rf build && mkdir build
 WORKDIR /app/openpose/build
-RUN cmake .. -DGPU_MODE=CPU_ONLY
-RUN make -j$(nproc)
+RUN cmake .. -DGPU_MODE=CPU_ONLY && make -j$(nproc)
 
-# ========================
-# Add OpenPose libraries to LD_LIBRARY_PATH
-# ========================
 ENV LD_LIBRARY_PATH=/app/openpose/build/src/openpose:$LD_LIBRARY_PATH
 
 # ========================
@@ -101,7 +108,7 @@ ENV LD_LIBRARY_PATH=/app/openpose/build/src/openpose:$LD_LIBRARY_PATH
 EXPOSE 3000 5000 8000
 
 # ========================
-# Run the script
+# Start Web Application
 # ========================
 WORKDIR /app
-CMD ["./run_web_app_build.sh"]
+# CMD ["./run_web_app_build.sh"]

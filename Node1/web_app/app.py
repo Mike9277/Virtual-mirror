@@ -6,7 +6,6 @@
 # openpose library.
 # The application now supports communication between two servers through rdma
 # and allows for multi-thread users requests.
-# The initial script was prepared by Emilie le Rouzic.
 #
 #
 # 11 2025, Michelangelo Guaitolini
@@ -51,6 +50,7 @@ MAIN_DIR = config["MAIN_DIR"]
 BACK_DIR = config["BACK_DIR"]
 HOST_DIR = config["HOST_DIR"]
 
+USER_MAIN = config["USER_MAIN"]
 USER_BACK = config["USER_BACK"]
 USER_JETSON = config["USER_JETSON"]
 
@@ -318,19 +318,176 @@ def run_script():
         with open(config_path) as f:
             config = json.load(f)
             DEPLOYMENT=config["DEPLOYMENT"]
-        # -------------------------------------------------------------------
-        docker_cmd = ("docker run --gpus all --rm --shm-size=2g "
-                      "-v /home/cldemo/.ssh:/cldemo/.ssh:ro "
-                      "-v /var/run/docker.sock:/var/run/docker.sock "
-                      "-v /home/cldemo/guaitolini/virtual_mirror_GVirtus/shared-data/:/app/shared-data "
-                      "-v /home/cldemo/guaitolini/virtual_mirror_GVirtus/shared-data-tmp/:/app/shared-data-tmp "
-                      f"smart-mirror-node_2 /app/run_only_viton.sh '{person}' '{cloth}' '{unique_id}'"
-                     )
-        # -------------------------------------------------------------------
+            
         if DEPLOYMENT == "LOCAL":
             # Run locally
+            # ---------------------------------------------------------------
+            docker_cmd = ("docker run --gpus all --rm --shm-size=2g "
+                          f"-v /home/{USER_MAIN}/.ssh:/root/.ssh:ro "
+                          "-v /var/run/docker.sock:/var/run/docker.sock "
+                          f"-v {HOST_DIR}/shared-data/:/app/shared-data "
+                          f"-v {HOST_DIR}/shared-data-tmp/:/app/shared-data-tmp "
+                          f"smart-mirror-node_2 /app/run_only_viton.sh '{person}' '{cloth}' '{unique_id}'"
+                         )
+            # ----------------------------------------------------------------
             subprocess.run([docker_cmd], shell=True, check=True, text=True)
         else:
+            # ---------------------------------------------------------------
+            docker_cmd = ("docker run --gpus all --rm --shm-size=2g "
+                          f"-v /home/{USER_BACK}/.ssh:/root/.ssh:ro "
+                          "-v /var/run/docker.sock:/var/run/docker.sock "
+                          f"-v {BACK_DIR}/shared-data/:/app/shared-data "
+                          f"-v {BACK_DIR}/shared-data-tmp/:/app/shared-data-tmp "
+                          f"smart-mirror-node_2 /app/run_only_viton.sh '{person}' '{cloth}' '{unique_id}'"
+                         )
+            # ----------------------------------------------------------------
+            # Run VITON-HD on the other server.
+            subprocess.run(["ssh",f"{USER_BACK}@{IP_BACK}",docker_cmd], check=True, text=True)
+            
+            # Send command 1 to indicate that we are fetching a list of files.
+            rdma_send_buf[0] = 1
+            rdma_sink.send(rdma_send_buf[:1])
+            
+            print("Command fetch sent")
+            
+            result_image_path_bytes = result_image_path.encode('utf-8')
+            result_image_path_array = np.frombuffer(result_image_path_bytes, dtype=np.uint8)
+            
+            # Send the directory name to fetch
+            rdma_send_buf[:len(result_image_path_array)] = result_image_path_array
+            rdma_sink.send(rdma_send_buf[:len(result_image_path_array)])
+            
+            print(f"Directory name sent: {result_image_path}")
+            
+            # Receive the session directory.
+            while True:
+                    # First receive: file path (string)
+                    print("Receiving file path...")
+                    path_data = rdma_src.recv()
+                    
+                    if len(path_data) == 0:
+                        # No more files to send.
+                        break
+                    
+                    # Decode the path if it's bytes, or handle as string
+                    if isinstance(path_data, bytes):
+                        # image_path = path_data.decode('utf-8')
+                        rel_path = path_data.decode('utf-8')
+                    elif isinstance(path_data, np.ndarray):
+                        # image_path = path_data.tobytes().decode('utf-8')
+                        rel_path = path_data.tobytes().decode('utf-8')
+                    else:
+                        # image_path = str(path_data)
+                        rel_path = str(path_data)
+                    
+                    image_path = Path(MAIN_DIR) / rel_path
+                    print(f"Main dir: {MAIN_DIR}; Relative path: {rel_path}")
+                    #print(f"Received path: {image_path}")
+                    
+                    # Second receive: file content (numpy array)
+                    print("Receiving file content...")
+                    content_array = rdma_src.recv()
+                    
+                    # Convert numpy array to bytes
+                    if isinstance(content_array, np.ndarray):
+                        content_bytes = content_array.tobytes()
+                    else:
+                        content_bytes = bytes(content_array)
+                    
+                    print(f"Received {len(content_bytes)} bytes")
+                    
+                    # Ensure directory exists
+                    os.makedirs(os.path.dirname(image_path), exist_ok=True)
+                    
+                    # Write to file
+                    with open(image_path, "wb") as f:
+                        f.write(content_bytes)
+                    
+                    print(f"Successfully wrote file to: {image_path}")
+            
+            print("RDMA transfer done!")
+        # -------------------------------------------------------------------
+
+        result_image = None
+
+        # Find the file which name is {person}_{cloth}.jpg
+        person_base = os.path.splitext(person)[0]      # "webcam_image" (no .jpg)
+        person_trimmed = person_base.split("_")[0] 
+        cloth_base = os.path.splitext(cloth)[0]
+
+        target_filename = f"{person_trimmed}_{cloth_base}.jpg"
+
+        # Files full path
+        jpg_files_full = [os.path.join(result_image_path, target_filename)]
+
+        # Select the most recent file.
+        result_image = max(jpg_files_full, key=os.path.getmtime)
+
+        # Encode the result image in base64 to return to frontend
+        with open(result_image, "rb") as image_file:
+            image_data = base64.b64encode(image_file.read()).decode('utf-8')
+                    
+        return jsonify({
+            'output': 'Script executed successfully',
+            'person': person,
+            'cloth': cloth,
+            'image' : image_data,
+        }), 600
+
+    except subprocess.CalledProcessError as e:
+        error_output = e.stderr.decode('utf-8') if e.stderr else ''
+        return jsonify({'error': f"Script failed with error: {error_output}"}), 402
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 403
+
+# ---------------------------------------------------------------------------- #
+# COMBINE GARMENT AND UPLOADED PICTURE.
+@app.route('/run-script-upl', methods=['POST'])
+def run_script_upl():
+    # Collects person and garment data, after interacting with the home page of
+    # the web application (get_json).
+    data = request.get_json()
+    person = data.get('person')
+    cloth = data.get('cloth')
+    unique_id = data.get('sessionId')    
+
+    if not cloth:
+        return jsonify({'error': 'Cloth selection is missing'}), 422
+
+    # The final image is not saved locally. Clean any possible previous result
+    # from the folder.
+    result_image_path = MAIN_DIR + "/shared-data-tmp/" + unique_id + "/results"
+    result_image_path_rdma = BACK_DIR + "/shared-data-tmp/" + unique_id + "/results"
+        
+    try:
+        config_path = base_dir / "env_config.json"
+        with open(config_path) as f:
+            config = json.load(f)
+            DEPLOYMENT=config["DEPLOYMENT"]
+            
+        if DEPLOYMENT == "LOCAL":
+            # Run locally
+            # ---------------------------------------------------------------
+            docker_cmd = ("docker run --gpus all --rm --shm-size=2g "
+                          f"-v /home/{USER_MAIN}/.ssh:/root/.ssh:ro "
+                          "-v /var/run/docker.sock:/var/run/docker.sock "
+                          f"-v {HOST_DIR}/shared-data/:/app/shared-data "
+                          f"-v {HOST_DIR}/shared-data-tmp/:/app/shared-data-tmp "
+                          f"smart-mirror-node_2 /app/run_only_viton.sh '{person}' '{cloth}' '{unique_id}'"
+                         )
+            # ----------------------------------------------------------------
+            subprocess.run([docker_cmd], shell=True, check=True, text=True)
+        else:
+            # ---------------------------------------------------------------
+            docker_cmd = ("docker run --gpus all --rm --shm-size=2g "
+                          f"-v /home/{USER_BACK}/.ssh:/root/.ssh:ro "
+                          "-v /var/run/docker.sock:/var/run/docker.sock "
+                          f"-v {BACK_DIR}/shared-data/:/app/shared-data "
+                          f"-v {BACK_DIR}/shared-data-tmp/:/app/shared-data-tmp "
+                          f"smart-mirror-node_2 /app/run_only_viton.sh '{person}' '{cloth}' '{unique_id}'"
+                         )
+            # ----------------------------------------------------------------
             # Run VITON-HD on the other server.
             subprocess.run(["ssh",f"{USER_BACK}@{IP_BACK}",docker_cmd], check=True, text=True)
             
@@ -456,7 +613,7 @@ def add_img():
         return jsonify({'error': str(e)}), 500
 
 # ---------------------------------------------------------------------------- #
-# PROCESS PICTURE FROM WEBCAM [RDMA version + multithread]
+# PROCESS PICTURE FROM WEBCAM
 # When a new picture is taken, it has to be processed before to be added to the
 # home interface of the web application.
 @app.route('/preprocess-img', methods=['POST'])
@@ -497,6 +654,87 @@ def preprocess_img():
         openpose_img_dir = session_dir + "/openpose_img/"
         rendered_image_path = os.path.join(openpose_img_dir, f"{filename_without_ext}_rendered.png")
         
+
+        config_path = base_dir / "env_config.json"
+        with open(config_path) as f:
+            config = json.load(f)
+            DEPLOYMENT=config["DEPLOYMENT"]
+
+        if DEPLOYMENT != "LOCAL":
+            # This portion is for the RDMA version.
+            # ---------------------------------------------------------
+            # Send data.
+            print("Sending data")                   
+            send_session_dir_via_rdma(session_dir)
+            
+            # ---------------------------------------------------------
+
+        # Ensure the generated images exist
+        if not os.path.isfile(vis_image_path):
+            return jsonify({'error': f'Generated image {vis_image_path} does not exist'}), 499
+        if not os.path.isfile(rendered_image_path):
+            return jsonify({'error': f'Generated image {rendered_image_path} does not exist'}), 501
+
+        # Read and encode the images to include them in the response
+        with open(image_path, "rb") as original_file:
+            original_image = base64.b64encode(original_file.read()).decode('utf-8')
+        with open(vis_image_path, "rb") as vis_file:
+            vis_image = base64.b64encode(vis_file.read()).decode('utf-8')
+        with open(rendered_image_path, "rb") as rendered_file:
+            rendered_image = base64.b64encode(rendered_file.read()).decode('utf-8')
+        
+        print("Unique ID:",unique_id)
+        return jsonify({
+            'message': f'Image {filename} preprocessed successfully and script executed',
+            'original_image': original_image,
+            'vis_image': vis_image,
+            'rendered_image': rendered_image,
+            'sessionId': unique_id,
+            'cpu': False
+        }), 200
+    except FileNotFoundError:
+        return jsonify({'error': 'File or directory not found'}), 500
+    except subprocess.CalledProcessError as e:
+        error_output = e.stderr.decode('utf-8') if e.stderr else ''
+        return jsonify({'error': f'Script failed with error: {error_output}'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# ---------------------------------------------------------------------------- #
+# PROCESS UPLOADED PICTURE
+# This is to handle pictures uploaded by the user.
+@app.route('/preprocess-upl', methods=['POST'])
+def preprocess_upl():
+    data = request.get_json()
+    filename = data.get('filename')
+    #image_data = data.get('image_data')  # base64 image from frontend
+    if not filename:
+        return jsonify({'error': 'No filename provided'}), 423
+
+    try:
+        # 
+        upload_folder = app.config['UPLOAD_FOLDER']
+        image_path = os.path.join(upload_folder, filename)
+        
+        # Generate unique session directory
+        unique_id = str(uuid.uuid4())
+        session_dir = os.path.join(MAIN_DIR, "shared-data-tmp", unique_id)
+        os.makedirs(session_dir, exist_ok=True)  # ensure the folder exists
+
+        # Copy necessary files to session dir
+        local_file_path = os.path.join(session_dir,filename)
+        shutil.copy(image_path, local_file_path)
+
+        # Run the preprocessing script
+        preprocess_python(session_dir)
+        
+        # Construct paths to generated images
+        filename_without_ext = os.path.splitext(filename)[0]
+        vis_image_dir = session_dir + "/img_parse/"
+        vis_image_path = os.path.join(vis_image_dir, f"{filename_without_ext}_vis.png")
+
+        openpose_img_dir = session_dir + "/openpose_img/"
+        rendered_image_path = os.path.join(openpose_img_dir, f"{filename_without_ext}_rendered.png")       
 
         config_path = base_dir / "env_config.json"
         with open(config_path) as f:
@@ -627,13 +865,13 @@ if __name__ == '__main__':
     docker_node2 = ("docker run --rm --name virtual_mirror_container2 "
                     "--network host "
                     "--privileged "
-                    "-v /home/cldemo/.ssh:/home/cldemo/.ssh:ro "
+                    f"-v /home/{USER_BACK}/.ssh:/home/root/.ssh:ro "
                     "-v /var/run/docker.sock:/var/run/docker.sock "
-                    "-v /home/cldemo/guaitolini/virtual_mirror_GVirtus/shared-data/:/app/shared-data "
-                    "-v /home/cldemo/guaitolini/virtual_mirror_GVirtus/shared-data-tmp/:/app/shared-data-tmp "
+                    f"-v {BACK_DIR}/shared-data/:/app/shared-data "
+                    f"-v {BACK_DIR}/shared-data-tmp/:/app/shared-data-tmp "
                     "-p 3000:3000 -p 5000:5000 -p 8000:8000 "
                     "virtual_mirror_node2:latest python3 web_app/app_backend.py "
-                    "> /home/cldemo/rdma_log 2>&1 & "
+                    f"> /home/{USER_BACK}/rdma_log 2>&1 & "
                     )
     
     subprocess.run(["ssh",f"{USER_BACK}@{IP_BACK}",docker_node2], check=True, text=True)
