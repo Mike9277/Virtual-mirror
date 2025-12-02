@@ -1,8 +1,9 @@
 # Virtual Mirror Distributed Web Service
-This repository contains the source code and the docker images developed in the context of Use Case 4 of the CLEVER project. The application is a virtual mirror application, allowing the users to combine their own pictures, acquired through webcam, with selected garments, virtually trying them on. The application is developed as a distributed service, displaced between two edge nodes. The two nodes 
+This repository contains the source code and the docker images developed in the context of Use Case 4 of the CLEVER project. The application is a virtual mirror application, allowing the users to combine their own pictures, acquired through webcam, with selected garments, virtually trying them on. The application is developed as a distributed service, displaced between two edge nodes. 
 
 ## Node 1
-Is dedicated to interacting with the user, collecting images and pre-processing them before combining users’ pictures with garments.
+Is dedicated to interacting with the user, collecting images and pre-processing them before combining users’ pictures with garments. Node 1 is allowed to be a CPU-only device, leveraging either on CPU or virtual GPU to run the application.
+
 1. **Web application**
    
    enables the https web service that allows the users to upload their pictures, take snapshots with their own webcam and use the provided service.
@@ -16,7 +17,7 @@ Is dedicated to interacting with the user, collecting images and pre-processing 
    provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service.
 
 ## Node 2
-Is where backend services are activated, both for rdma and gpu virtualization. These services are necessary to create communication channels between Node 1 and Node 2, are activated at startup and allow low-latency communication and hardware resources exploitation by the service deployed at Node 1.
+Is where backend services are activated, both for rdma and gpu virtualization. These services are necessary to create communication channels between Node 1 and Node 2, are activated at startup and allow low-latency communication and hardware resources exploitation by the service deployed at Node 1. Node 2 must be equipped with a GPU, as it is necessary to execute VITON service and to allow Node 1 to access to the GPU virtualization service.
 
 ## VITON
 This service is what merges images and garments and is deployed as an isolated container. In standard configuration is deployed on Node 2, but it may be deployed on Node 1 if local deployment is necessary.
