@@ -26,18 +26,18 @@ This service is what merges images and garments and is deployed as an isolated c
    ```bash
    docker pull ghcr.io/mike9277/virtual_mirror_node_1:latest
    ```
-
-On Node 2:
-```bash
-docker pull ghcr.io/mike9277/virtual_mirror_node_2:latest
-```
-
-```bash
-docker pull ghcr.io/mike9277/virtual_mirror_viton:latest
-```
-If you want to test the local deployment you may want to pull virtual_mirror_viton docker also on Node 1.
-
-Finally, you will need to edit env_config.json to set your own filepaths and addresses. This file sets all the environmental variables necessary to run the application and to allow communication between Node 1 and Node 2. 
+   On Node 2:
+   ```bash
+   docker pull ghcr.io/mike9277/virtual_mirror_node_2:latest
+   ```
+   ```bash
+   docker pull ghcr.io/mike9277/virtual_mirror_viton:latest
+   ```
+   If you want to test the local deployment you may want to pull virtual_mirror_viton docker also on Node 1.
+   
+4. **Config environment**
+   
+   Finally, you will need to edit env_config.json to set your own filepaths and addresses. This file sets all the environmental variables necessary to run the application and to allow communication between Node 1 and Node 2. 
 
 ## Set GPU Virtualization
 The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. Download the necessary repository both on Node 1 and Node 2 folders,
