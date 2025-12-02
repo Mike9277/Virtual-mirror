@@ -31,6 +31,7 @@ docker pull ghcr.io/mike9277/virtual_mirror_node_2:latest
 docker pull ghcr.io/mike9277/virtual_mirror_viton:latest
 ```
 If you want to test the local deployment you may want to pull virtual_mirror_viton docker also on Node 1.
+
 Finally, you will need to edit env_config.json to set your own filepaths and addresses. This file sets all the environmental variables necessary to run the application and to allow communication between Node 1 and Node 2. 
 
 ## Set GPU Virtualization
