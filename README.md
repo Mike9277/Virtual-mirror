@@ -49,7 +49,37 @@ This service is what merges images and garments and is deployed as an isolated c
    Finally, you will need to edit **env_config.json** to set your own filepaths and addresses. This file sets all the environmental variables necessary to run the application and to allow communication between Node 1 and Node 2. 
 
 ## Set GPU Virtualization
-The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. Download the necessary repository both on Node 1 and Node 2 folders,
+The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. The original repository, available at [Link text](https://github.com/ecn-aau/GVirtuS/tree/dev) has been modified to integrate it with the rest of the application. To properly setup GVirtus service, execute the following steps:
+
+1. Adjust addresses
+   Modify the ip addresses at .../GVirtuS/examples/openpose/properties.json, where "server_address" must be changed to your Node 2 ip address.
+   ```bash
+   {
+     "communicator": [
+       {
+         "endpoint": {
+           "suite": "tcp/ip",                   
+           "protocol": "tcp",                     
+           "server_address": "10.30.7.117",        
+           "port": "8888"
+         },
+         "plugins": [
+           "cuda",
+           "cudart",
+           "cublas",
+           "curand",
+           "cudnn",
+           "cufft",
+           "cusolver",
+           "cusparse",
+           "nvrtc"
+         ]
+       }
+     ],
+     "secure_application": false
+   }
+   ```
+3. 
 
 ## Run the application 
 You may run the application on Node 1, with the following command:
