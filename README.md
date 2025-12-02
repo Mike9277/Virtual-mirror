@@ -3,9 +3,17 @@ This repository contains the source code and the docker images developed in the 
 
 ## Node 1
 Is dedicated to interacting with the user, collecting images and pre-processing them before combining users’ pictures with garments.
-1. **Web application** enables the https web service that allows the users to upload their pictures, take snapshots with their own webcam and use the provided service.
-2. **Pre-processing** is necessary to map the images, recognizing poses and body areas. It uses openpose and 2D human parsing services. Openpose has been optimized to exploit a GPU virtualization service, allowing Node 1 to use Node 2    hardware resources, specifically its GPU.
-3. **rdma** provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service.
+1. **Web application**
+   
+   enables the https web service that allows the users to upload their pictures, take snapshots with their own webcam and use the provided service.
+
+2. **Pre-processing**
+   
+   is necessary to map the images, recognizing poses and body areas. It uses openpose and 2D human parsing services. Openpose has been optimized to exploit a GPU virtualization service, allowing Node 1 to use Node 2 hardware resources, specifically its GPU.
+
+3. **rdma**
+   
+   provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service.
 
 ## Node 2
 Is where backend services are activated, both for rdma and gpu virtualization. These services are necessary to create communication channels between Node 1 and Node 2, are activated at startup and allow low-latency communication and hardware resources exploitation by the service deployed at Node 1.
@@ -37,7 +45,7 @@ This service is what merges images and garments and is deployed as an isolated c
    
 4. **Config environment**
    
-   Finally, you will need to edit env_config.json to set your own filepaths and addresses. This file sets all the environmental variables necessary to run the application and to allow communication between Node 1 and Node 2. 
+   Finally, you will need to edit **env_config.json** to set your own filepaths and addresses. This file sets all the environmental variables necessary to run the application and to allow communication between Node 1 and Node 2. 
 
 ## Set GPU Virtualization
 The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. Download the necessary repository both on Node 1 and Node 2 folders,
