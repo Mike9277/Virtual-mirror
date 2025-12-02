@@ -33,10 +33,10 @@ docker pull ghcr.io/mike9277/virtual_mirror_viton:latest
 If you want to test the local deployment you may want to pull virtual_mirror_viton docker also on Node 1.
 
 
-3. **Set GvirtuS directories**
+## Set GPU Virtualization
 The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. Download the necessary repository both on Node 1 and Node 2 folders,
 
-4. **Run the application** 
+## Run the application 
 You may run the application on Node 1, with the following command:
 ```bash
 ./start_application.sh
