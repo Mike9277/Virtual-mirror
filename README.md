@@ -3,6 +3,9 @@ This repository contains the source code and the docker images developed in the 
 
 1. ## Node 1
    Node 1 is dedicated to interacting with the user, collecting images and pre-processing them before combining users’ pictures with garments.
+   1. Web application enables the https web service that allows the users to upload their pictures, take snapshots with their own webcam and use the provided service.
+   2. Pre-processing is necessary to map the images, recognizing poses and body areas. It uses openpose and 2D human parsing services. Openpose has been optimized to exploit a GPU virtualization service, allowing Node 1 to use Node 2 hardware resources, specifically its GPU.
+   3. rdma provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service.
 3. ## Node 2
 **Bold Text**
 *Italic Text*
