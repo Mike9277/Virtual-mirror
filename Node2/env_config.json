@@ -2,6 +2,8 @@
   "MAIN_DIR": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
   "BACK_DIR": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
   
+  "HOST_DIR": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
+  
   "USER_MAIN": "cldemo",
   "USER_BACK": "cldemo",
   "USER_JETSON": "cldemo",
@@ -10,8 +12,8 @@
   "IP_BACK": "10.30.7.117",
   "IP_JETSON": "10.30.7.210",
   
-  "PORT_MAIN": "192.168.120.2",
-  "PORT_BACK": "192.168.120.1",
+  "PORT_MAIN": "192.168.200.13",
+  "PORT_BACK": "192.168.200.14",
   "webPort": "3000",
   "apiPort": "5000",
   "cameraPort": "4000"
