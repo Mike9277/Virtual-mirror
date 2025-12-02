@@ -10,6 +10,9 @@ Is dedicated to interacting with the user, collecting images and pre-processing 
 ## Node 2
 Is where backend services are activated, both for rdma and gpu virtualization.
 
+## VITON
+This service is what merges images and garments and is deployed as an isolated container. In standard configuration is deployed on Node 2, but it may be deployed on Node 1 if local deployment is necessary.
+
 **Bold Text**
 *Italic Text*
 - List item
