@@ -17,10 +17,19 @@ This service is what merges images and garments and is deployed as an isolated c
 1. **Download Node 1 and Node 2 directories**
 All the executable in this projects are designed to run inside containers but they expect a basic structure on the host and they need access to specific folders on the host. To be sure to have the correct setup on your directories, download Node1 repository on your Node1 and Node2 repository on Node2. Then, rename the two directories so that they have the same filepath (es. /home/username/virtual_mirror/), as the application expects that. At this point, you may pull the necessary images on your servers.
 
+On Node 1:
 ```bash
-docker tag smart-mirror-node_2 ghcr.io/mike9277/virtual_mirror_viton:latest
-docker push ghcr.io/mike9277/virtual_mirror_viton:latest
+docker pull ghcr.io/mike9277/virtual_mirror_node_1:latest
+```
 
+On Node 2:
+```bash
+docker pull ghcr.io/mike9277/virtual_mirror_node_2:latest
+```
+
+```bash
+docker pull ghcr.io/mike9277/virtual_mirror_viton:latest
+```
 
 3. **Set GvirtuS directories**
 The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure.
