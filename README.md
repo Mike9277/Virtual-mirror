@@ -34,14 +34,10 @@ If you want to test the local deployment you may want to pull virtual_mirror_vit
 
 
 3. **Set GvirtuS directories**
-The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure.
+The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure. Download the necessary repository both on Node 1 and Node 2 folders,
 
 4. **Run the application** 
 You may run the application on Node 1, with the following command:
-
-**Bold Text**
-*Italic Text*
-- List item
-1. Numbered item
-[Link text](https://example.com)
-![Image alt](image.png)
+```bash
+./start_application.sh
+```
