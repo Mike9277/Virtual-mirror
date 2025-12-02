@@ -41,7 +41,7 @@ _________________________________				____________________________
 ## Environment Setting
 1. **Download Node 1 and Node 2 directories**
    
-   All the executable in this projects are designed to run inside containers but they expect a basic structure on the host and they need access to specific folders on the host. To be sure to have the correct setup on your directories, download Node1 repository on your Node1 and Node2 repository on Node2. Then, rename the two directories so that they have the same filepath (es. /home/username/virtual_mirror/), as the application expects that. At this point, you may pull the necessary images on your servers.
+   All the executable in this projects are designed to run inside containers but they expect a basic structure on the host and they need access to specific folders on the host. To be sure to have the correct setup on your directories, download Node1 repository on your Node1 and Node2 repository on Node2. At this point, you may pull the necessary images on your servers.
 
 2. **Pull containers**
    
