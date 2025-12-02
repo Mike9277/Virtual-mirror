@@ -61,7 +61,7 @@ The application leverages on GPU virtualization service provided by GVirtus. GVi
          "endpoint": {
            "suite": "tcp/ip",                   
            "protocol": "tcp",                     
-           "server_address": "10.30.7.117",        
+           "server_address": "10.30.7.117",                # YOU NEED TO MODIFY THIS LINE!    
            "port": "8888"
          },
          "plugins": [
