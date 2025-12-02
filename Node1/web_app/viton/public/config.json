@@ -2,7 +2,7 @@
   "MAIN_DIR": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
   "BACK_DIR": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
   
-  "HOST": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
+  "HOST_DIR": "/home/cldemo/guaitolini/virtual_mirror_GVirtus",
   
   "USER_MAIN": "cldemo",
   "USER_BACK": "cldemo",
@@ -13,6 +13,8 @@
   "IP_MAIN": "10.30.7.13",
   "IP_BACK": "10.30.7.117",
   "IP_JETSON": "10.30.7.210",
+  
+  "DEPLOYMENT": "DISTRIBUTED",
   
   "PORT_MAIN": "192.168.200.13",
   "PORT_BACK": "192.168.200.14",

@@ -82,7 +82,25 @@ def generate_frames():
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+"""
 if __name__ == '__main__':
     app.run(host='0.0.0.0',
             port=4000, 
             ssl_context=(os.path.join(MAIN_DIR,'web_app','backend-cert.pem'), os.path.join(MAIN_DIR,'web_app','backend-key.pem')))
+"""
+
+if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
+
+    cert_path = os.path.join(MAIN_DIR, "web_app", "backend-cert.pem")
+    key_path  = os.path.join(MAIN_DIR, "web_app", "backend-key.pem")
+
+    # TLS 1.3-only server context; PQ groups come from OpenSSL config
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.minimum_version = ssl.TLSVersion.TLSv1_3
+    context.maximum_version = ssl.TLSVersion.TLSv1_3
+    context.load_cert_chain(certfile=cert_path, keyfile=key_path)
+    app.run(
+            host="0.0.0.0",
+            port=4000,
+            ssl_context=context)

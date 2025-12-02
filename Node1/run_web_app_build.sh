@@ -20,9 +20,17 @@ PASSWORD=$(jq -r '.PASSWORD' $ENV_CONFIG_PATH)
 DOCKER=$(jq -r '.DOCKER' $ENV_CONFIG_PATH)
 
 # ---------------------------------------------------------------------------- #
+# RDMA Setting
+# Node 2:
+# ssh $USER_BACK@$IP_BACK 'export PYTHONPATH=/home/cldemo/rdma-container/builddir-release; \
+#                          python3 /home/cldemo/guaitolini/virtual_mirror_GVirtus/web_app/app_backend.py > rdma_log 2>&1 &'
+
+# Node 1
+# export PYTHONPATH=$MAIN_DIR/rdma-container/builddir-release
+
+# ---------------------------------------------------------------------------- #
 # Configuration data for the web application are in a shared-data folder, here
 # the paths to the configuration file and shared-data folder are reported:
-
 SHARED_DATA="$MAIN_DIR/shared-data/web_src"
 
 # ---------------------------------------------------------------------------- #
@@ -69,6 +77,7 @@ fi
 # This portions is needed to execute the backend portion of GVirtus service, 
 # which is necessary to use the virtual GPU.
 
+# RUN GVirtus with docker.
 ssh $USER_BACK@$IP_BACK 'export BACK_DIR=$HOME/guaitolini/virtual_mirror_GVirtus
                         pkill -f "$BACK_DIR/bin/gvirtus-backend"; \
                         export GVIRTUS_HOME=$BACK_DIR/GVirtuS; \
@@ -83,8 +92,7 @@ ssh $USER_BACK@$IP_BACK 'export BACK_DIR=$HOME/guaitolini/virtual_mirror_GVirtus
 
 echo "Everything is successfully launched."
 echo -e "Web is accessible at ${GREEN}https://${ipAddress}:${webPort}${NC},"
-echo "API at https://${ipAddress}:${apiPort},"
-echo "and camera at https://${ipAddress}:${cameraPort}/video_feed if enabled."
+echo "API at https://${ipAddress}:${apiPort}"
 
 # This command is launches the applications itself. After running docker, this
 # will be available under /web_app_container.

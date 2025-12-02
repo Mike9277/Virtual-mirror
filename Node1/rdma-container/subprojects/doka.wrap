@@ -1,0 +1,5 @@
+[wrap-git]
+url = git@gitlab.tue.nl:20233461/doka.git
+revision = bd5a199eedeabba9e511d23fb82c2253eedde8b9
+depth = 1
+
