@@ -30,6 +30,8 @@ docker pull ghcr.io/mike9277/virtual_mirror_node_2:latest
 ```bash
 docker pull ghcr.io/mike9277/virtual_mirror_viton:latest
 ```
+If you want to test the local deployment you may want to pull virtual_mirror_viton docker also on Node 1.
+
 
 3. **Set GvirtuS directories**
 The application leverages on GPU virtualization service provided by GVirtus. GVirtus is handled as an external service, and it needs its own setup procedure.
