@@ -22,6 +22,25 @@ Is where backend services are activated, both for rdma and gpu virtualization. T
 ## VITON
 This service is what merges images and garments and is deployed as an isolated container. In standard configuration is deployed on Node 2, but it may be deployed on Node 1 if local deployment is necessary.
 
+
+_________________________________		___________________________
+|					|		|				|
+| Node 1 				|		| Node 2			|
+|	web application		|		|	rdma-backend	|
+|	pre-processing		| ___________	|	GVirtus-backend	|
+|		openpose (GVirtus)	|             |	| ________________________	|
+|		2D human parsing 	| 	|					
+|	rdma-frontend 		|	|					
+| _______________________________ |	|	
+						|	__________________________	_		
+						|_____	|	         VITON		 |
+							|__________________________|
+
+
+
+
+
+
 ## Environment Setting
 1. **Download Node 1 and Node 2 directories**
    
