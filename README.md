@@ -12,9 +12,9 @@ Is dedicated to interacting with the user, collecting images and pre-processing 
    
    is necessary to map the images, recognizing poses and body areas. It uses openpose and 2D human parsing services. Openpose has been optimized to exploit a GPU virtualization service, allowing Node 1 to use Node 2 hardware resources, specifically its GPU.
 
-3. **rdma**
+3. **RDMA**
    
-   provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service.
+   Provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service. RDMA communication has been tested with servers connected through two Nvidia BlueField-2, leveraging on DOCA.
 
 ## Node 2
 Is where backend services are activated, both for rdma and gpu virtualization. These services are necessary to create communication channels between Node 1 and Node 2, are activated at startup and allow low-latency communication and hardware resources exploitation by the service deployed at Node 1. Node 2 must be equipped with a GPU, as it is necessary to execute VITON service and to allow Node 1 to access to the GPU virtualization service.
