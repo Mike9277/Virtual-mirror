@@ -1,37 +1,35 @@
-
 #!/bin/bash
 # ------------------------------------------------------------------------------- 
 # Read configuration file
 CONFIG_FILE="./env_config.json"
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Configuration file $CONFIG_FILE not found!"
+    echo "File di configurazione $CONFIG_FILE non trovato!"
     exit 1
 fi
 
-# HOST_DIR is the real project root on the host
-HOST_DIR=$(jq -r '.HOST_DIR' "$CONFIG_FILE")
+MAIN_DIR=$(jq -r '.MAIN_DIR' "$CONFIG_FILE")
 USER_MAIN=$(jq -r '.USER_MAIN' "$CONFIG_FILE")
 WEB_PORT=$(jq -r '.webPort' "$CONFIG_FILE")
 API_PORT=$(jq -r '.apiPort' "$CONFIG_FILE")
 CAMERA_PORT=$(jq -r '.cameraPort' "$CONFIG_FILE")
 
-echo "HOST_DIR = $HOST_DIR"
-
 # -------------------------------------------------------------------------------
-# Start the web application container
-# Inside the container, MAIN_DIR is /app (set at build time).
-# On the host, we always use HOST_DIR for bind mounts.
+# Start the web application through the docker container. The docker dynamically
+# access env_config.json but before launching the application it is needed to 
+# update MAIN_DIR value.
+
+jq '.MAIN_DIR="/app"' $MAIN_DIR/env_config.json > $MAIN_DIR/env_config_tmp.json
+mv $MAIN_DIR/env_config_tmp.json $MAIN_DIR/env_config.json
 
 docker run --rm -it --name virtual_mirror_container_pqc \
   --network host \
   --privileged \
   --shm-size=1g \
-  -v /home/"$USER_MAIN"/.ssh:/root/.ssh:ro \
+  -v /home/cldemo/.ssh:/root/.ssh:ro \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -v "$HOST_DIR/shared-data":/app/shared-data \
-  -v "$HOST_DIR/shared-data-tmp":/app/shared-data-tmp \
-  -v "$HOST_DIR/GVirtuS":/app/GVirtuS \
-  -v "$HOST_DIR/env_config.json":/app/env_config.json:ro \
-  -p "$WEB_PORT:3000" -p "$API_PORT:5000" -p "$CAMERA_PORT:8000" \
+  -v $MAIN_DIR/shared-data/:/app/shared-data \
+  -v $MAIN_DIR/shared-data-tmp/:/app/shared-data-tmp \
+  -v $MAIN_DIR/GVirtuS/:/app/GVirtuS \
+  -p 3000:3000 -p 5000:5000 -p 8000:8000 \
   virtual_mirror_pqc ./run_web_app.sh

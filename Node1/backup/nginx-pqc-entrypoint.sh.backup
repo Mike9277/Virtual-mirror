@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -e
+
+# Use nginx and OpenSSL from /opt instead of system ones,
+# with PQC (ML-KEM) groups and AES-256-GCM enforced via OpenSSL conf.
+
+OPENSSL_PREFIX="${OPENSSL_PREFIX:-/opt/src/openssl-3.5.0/.openssl}"
+NGINX_PREFIX="${NGINX_PREFIX:-/opt/nginx-pqc}"
+PQC_OPENSSL_CONF="${PQC_OPENSSL_CONF:-/opt/openssl-3.5/ssl/pqc-openssl.cnf}"
+
+# Prefer custom bins over system
+export PATH="$NGINX_PREFIX/sbin:$OPENSSL_PREFIX/bin:$PATH"
+
+# Prefer custom libs over system
+export LD_LIBRARY_PATH="$OPENSSL_PREFIX/lib64:$OPENSSL_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+
+# Prefer custom pkg-config files
+export PKG_CONFIG_PATH="$OPENSSL_PREFIX/lib64/pkgconfig:$OPENSSL_PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+
+# Point OpenSSL to the PQC+AES256 config
+export OPENSSL_CONF="$PQC_OPENSSL_CONF"
+
+nginx-pqc() {
+  "$NGINX_PREFIX/sbin/nginx" "$@"
+}
+
+echo "Using custom nginx and openssl:"
+echo "  nginx   -> $(command -v nginx || echo 'not in PATH')"
+echo "  openssl -> $(command -v openssl || echo 'not in PATH')"
+echo "  OPENSSL_CONF -> $OPENSSL_CONF"
+echo
+
+# Stop existing nginx inside container if running (rare but harmless)
+echo "Stopping existing PQC nginx if running..."
+if pgrep -f "$NGINX_PREFIX/sbin/nginx" >/dev/null 2>&1; then
+  nginx-pqc -s quit || true
+  sleep 1
+fi
+
+# If command is "nginx" or options (starting with '-') -> run nginx
+if [ "$1" = "nginx" ] || [[ "${1:-}" == -* ]]; then
+  echo "Testing PQC nginx config..."
+  nginx-pqc -t -c "$NGINX_PREFIX/conf/nginx.conf"
+
+  echo "Starting PQC nginx in foreground..."
+  exec nginx-pqc -g "daemon off;" -c "$NGINX_PREFIX/conf/nginx.conf"
+else
+  # If user overrides CMD, just exec that (useful for debugging shells)
+  exec "$@"
+fi

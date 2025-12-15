@@ -554,31 +554,25 @@ def run_script_upl():
             
             print("RDMA transfer done!")
         # -------------------------------------------------------------------
-
         result_image = None
 
-        # Find the file which name is {person}_{cloth}.jpg
-        person_base = os.path.splitext(person)[0]      # "webcam_image" (no .jpg)
-        person_trimmed = person_base.split("_")[0] 
-        cloth_base = os.path.splitext(cloth)[0]
+        # Find the most recent .jpg file in the results directory
+        jpg_files = [f for f in os.listdir(result_image_path) if f.endswith(".jpg")]
+        if not jpg_files:
+            return jsonify({'error': 'Result image not found'}), 401
 
-        target_filename = f"{person_trimmed}_{cloth_base}.jpg"
-
-        # Files full path
-        jpg_files_full = [os.path.join(result_image_path, target_filename)]
-
-        # Select the most recent file.
+        jpg_files_full = [os.path.join(result_image_path, f) for f in jpg_files]
         result_image = max(jpg_files_full, key=os.path.getmtime)
 
         # Encode the result image in base64 to return to frontend
         with open(result_image, "rb") as image_file:
             image_data = base64.b64encode(image_file.read()).decode('utf-8')
-                    
+
         return jsonify({
             'output': 'Script executed successfully',
             'person': person,
             'cloth': cloth,
-            'image' : image_data,
+            'image': image_data,
         }), 600
 
     except subprocess.CalledProcessError as e:
@@ -878,14 +872,14 @@ if __name__ == '__main__':
     # ------------------------------------------------------------------------ #
     signal.signal(signal.SIGINT, signal_handler)
 
-    cert_path = os.path.join(MAIN_DIR, 'web_app', 'backend-cert.pem')
-    key_path  = os.path.join(MAIN_DIR, 'web_app', 'backend-key.pem')
+    #cert_path = os.path.join(MAIN_DIR, 'web_app', 'backend-cert.pem')
+    #key_path  = os.path.join(MAIN_DIR, 'web_app', 'backend-key.pem')
 
     # Create a TLS 1.3 server context
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    context.minimum_version = ssl.TLSVersion.TLSv1_3
-    context.maximum_version = ssl.TLSVersion.TLSv1_3
-    context.load_cert_chain(certfile=cert_path, keyfile=key_path)
+    #context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    #context.minimum_version = ssl.TLSVersion.TLSv1_3
+    #context.maximum_version = ssl.TLSVersion.TLSv1_3
+    #context.load_cert_chain(certfile=cert_path, keyfile=key_path)
 
     # Initialize rdma
     dev, rdma_port, gid_idx = rdma.find_device(IP_RDMA_BACK)
@@ -906,8 +900,8 @@ if __name__ == '__main__':
     try:
         app.run(
             host='0.0.0.0',
-            port=5000,
-            ssl_context=context
+            port=5001
+            #ssl_context=context
         )
     finally:
         stop_camera_stream()
