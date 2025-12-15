@@ -124,3 +124,6 @@ You may run the application on Node 1, with the following command:
 ```bash
 ./start_application.sh
 ```
+
+The application is now equipped with PQC encryption. After launching, it will provide the https address at which the user can connect to use it. It is expected to be ip_node_1:4000 and the connection should happen seamlessly. However, due to the certificates needed for PQC encryption, the application requires to be used on Google Chrome.
+
