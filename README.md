@@ -16,6 +16,8 @@ Is dedicated to interacting with the user, collecting images and pre-processing 
    
    Provides low-latency communication between Node 1 and Node 2, allowing to distribute the computational load as needed without compromising the Quality of Service. RDMA communication has been tested with servers connected through two Nvidia BlueField-2, leveraging on DOCA.
 
+PLEASE NOTE: the updated container for Node 1 is virtual_mirror_pqc, as it contains all the modifications and certificates necessary to run the application with PQC encryption.
+
 ## Node 2
 Is where backend services are activated, both for rdma and gpu virtualization. These services are necessary to create communication channels between Node 1 and Node 2, are activated at startup and allow low-latency communication and hardware resources exploitation by the service deployed at Node 1. Node 2 must be equipped with a GPU, as it is necessary to execute VITON service and to allow Node 1 to access to the GPU virtualization service.
 
